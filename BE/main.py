@@ -1,7 +1,10 @@
 from fastapi import FastAPI
+from routes import houses
 
 app = FastAPI()
 
+app.include_router(houses.router)
+
 @app.get("/")
-def read_root():
-    return {"message": "Hello from your FastAPI backend!"}
+async def root():
+    return {"message": "Welcome to the Houses Database API!"}
