@@ -74,4 +74,38 @@ public class CameraWallFader : MonoBehaviour
             rend.SetPropertyBlock(propertyBlock);
         }
     }
+
+    void OnDisable()
+    {
+        ResetWalls();
+    }
+
+    public void ResetWalls()
+    {
+        if (propertyBlock == null) propertyBlock = new MaterialPropertyBlock();
+
+        foreach (Renderer rend in wallRenderers)
+        {
+            if (rend == null) continue;
+
+            rend.GetPropertyBlock(propertyBlock);
+
+            Color currentColor = Color.white;
+            
+            if (rend.sharedMaterial.HasProperty("_BaseColor"))
+            {
+                currentColor = rend.sharedMaterial.GetColor("_BaseColor");
+                currentColor.a = 1.0f;
+                propertyBlock.SetColor("_BaseColor", currentColor);
+            }
+            else if (rend.sharedMaterial.HasProperty("_Color"))
+            {
+                currentColor = rend.sharedMaterial.color;
+                currentColor.a = 1.0f;
+                propertyBlock.SetColor("_Color", currentColor);
+            }
+
+            rend.SetPropertyBlock(propertyBlock);
+        }
+    }
 }
