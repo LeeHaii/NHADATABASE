@@ -1,19 +1,28 @@
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class PlayerSpawner : MonoBehaviour
 {
-    public GameObject playerPrefab;
+    [Tooltip("The Addressable key/address for the Player prefab")]
+    public string playerAddress = "Player";
 
-    void Awake()
+    void Start()
     {
-        if (playerPrefab != null)
+        if (!string.IsNullOrEmpty(playerAddress))
         {
-            // Spawn the player
-            Instantiate(playerPrefab, transform.position, transform.rotation);
+            // Spawn the player using Addressables string key
+            Addressables.InstantiateAsync(playerAddress, transform.position, transform.rotation).Completed += (handle) =>
+            {
+                if (handle.Status != AsyncOperationStatus.Succeeded)
+                {
+                    Debug.LogError($"PlayerSpawner: Failed to instantiate Addressable with key '{playerAddress}'.");
+                }
+            };
         }
         else
         {
-            Debug.LogError("PlayerSpawner: Player Prefab is not assigned.");
+            Debug.LogError("PlayerSpawner: Player Address string is empty.");
         }
     }
 }

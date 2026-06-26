@@ -21,6 +21,13 @@ public class ShowMetadata : MonoBehaviour
     [SerializeField] private TextMeshProUGUI ycor;
     [SerializeField] private TextMeshProUGUI zcor;
 
+    [Header("Metadata Filtering")]
+    [Tooltip("If key or value contains these strings, the entire entry is hidden.")]
+    public List<string> keysToIgnore = new List<string>();
+    
+    [Tooltip("These strings will be removed from keys and values (e.g. 'IFCLIST/' -> '').")]
+    public List<string> stringsToRemoveFromKeys = new List<string>();
+
     private GameObject lastSelectedObject; 
     private Camera mainCamera;
 
@@ -111,11 +118,6 @@ public class ShowMetadata : MonoBehaviour
 
     private void ShowingMetaData(GameObject obj)
     {
-        corHeader.text = obj.name;
-        xcor.text = "X: " + Mathf.Round(obj.transform.position.x);
-        ycor.text = "Y: " + Mathf.Round(obj.transform.position.y);
-        zcor.text = "Z: " + Mathf.Round(obj.transform.position.z);
-
         GameObject targetObj = obj;
         bool hasHouseComp = targetObj.TryGetComponent(out HouseComponent houseComp) && houseComp.Data != null;
         bool hasPixyz = targetObj.TryGetComponent(out Pixyz.ImportSDK.Metadata pixyzMetadata);
@@ -126,6 +128,11 @@ public class ShowMetadata : MonoBehaviour
             hasHouseComp = targetObj.TryGetComponent(out houseComp) && houseComp.Data != null;
             hasPixyz = targetObj.TryGetComponent(out pixyzMetadata);
         }
+
+        corHeader.text = targetObj.name;
+        xcor.text = "X: " + Mathf.Round(targetObj.transform.position.x);
+        ycor.text = "Y: " + Mathf.Round(targetObj.transform.position.y);
+        zcor.text = "Z: " + Mathf.Round(targetObj.transform.position.z);
 
         // Try getting House data first (Priority)
         if (hasHouseComp)
@@ -144,7 +151,27 @@ public class ShowMetadata : MonoBehaviour
         {
             foreach (var property in pixyzMetadata.getProperties())
             {
-                AddUIEntry(property.Key, property.Value);
+                string key = property.Key;
+                string value = property.Value;
+
+                bool shouldIgnore = false;
+                foreach (string ignoreStr in keysToIgnore)
+                {
+                    if (key.Contains(ignoreStr) || value.Contains(ignoreStr))
+                    {
+                        shouldIgnore = true;
+                        break;
+                    }
+                }
+                if (shouldIgnore) continue;
+
+                foreach (string removeStr in stringsToRemoveFromKeys)
+                {
+                    key = key.Replace(removeStr, "");
+                    value = value.Replace(removeStr, "");
+                }
+
+                AddUIEntry(key, value);
             }
         }
     }

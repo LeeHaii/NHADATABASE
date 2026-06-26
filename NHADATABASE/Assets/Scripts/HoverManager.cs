@@ -21,6 +21,16 @@ public class HoverManager : MonoBehaviour
     private Camera mainCamera;
     private MaterialPropertyBlock propertyBlock;
 
+    public static HoverManager Instance { get; private set; }
+    public Renderer CurrentHoveredRenderer => currentRenderer;
+    public float DarkenMultiplier => darkenMultiplier;
+
+    void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
+
     void Start()
     {
         mainCamera = Camera.main;
@@ -48,11 +58,21 @@ public class HoverManager : MonoBehaviour
                 {
                     ApplyDarken(hitTransform);
                 }
-                // 2. If it's not a unit, check for the Metadata component (Priority 2)
-                else if (hitTransform.TryGetComponent<Pixyz.ImportSDK.Metadata>(out _))
+                // 2. Check for Metadata component on the object itself
+                else 
                 {
-                    if(bimDataProperties.GetBIMdata())
+                    bool hasMetadata = hitTransform.TryGetComponent<Pixyz.ImportSDK.Metadata>(out _);
+                    
+                    // 3. If no metadata on the object, check 1 level above (its parent)
+                    if (!hasMetadata && hitTransform.parent != null)
+                    {
+                        hasMetadata = hitTransform.parent.TryGetComponent<Pixyz.ImportSDK.Metadata>(out _);
+                    }
+
+                    if (hasMetadata && bimDataProperties.GetBIMdata())
+                    {
                         ApplyDarken(hitTransform);
+                    }
                 }
             }
         }

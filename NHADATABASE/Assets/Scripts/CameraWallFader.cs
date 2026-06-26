@@ -35,7 +35,7 @@ public class CameraWallFader : MonoBehaviour
         }
     }
 
-    void Update()
+    void LateUpdate()
     {
         // 2. Look at where the camera currently is
         Vector3 cameraPosition = transform.position;
@@ -60,12 +60,26 @@ public class CameraWallFader : MonoBehaviour
             if (rend.sharedMaterial.HasProperty("_BaseColor"))
             {
                 currentColor = rend.sharedMaterial.GetColor("_BaseColor");
+                
+                if (HoverManager.Instance != null && HoverManager.Instance.CurrentHoveredRenderer == rend)
+                {
+                    float darken = HoverManager.Instance.DarkenMultiplier;
+                    currentColor = new Color(currentColor.r * darken, currentColor.g * darken, currentColor.b * darken, currentColor.a);
+                }
+
                 currentColor.a = targetAlpha; // 'a' stands for Alpha (transparency)
                 propertyBlock.SetColor("_BaseColor", currentColor);
             }
             else if (rend.sharedMaterial.HasProperty("_Color"))
             {
                 currentColor = rend.sharedMaterial.color;
+
+                if (HoverManager.Instance != null && HoverManager.Instance.CurrentHoveredRenderer == rend)
+                {
+                    float darken = HoverManager.Instance.DarkenMultiplier;
+                    currentColor = new Color(currentColor.r * darken, currentColor.g * darken, currentColor.b * darken, currentColor.a);
+                }
+
                 currentColor.a = targetAlpha;
                 propertyBlock.SetColor("_Color", currentColor);
             }
