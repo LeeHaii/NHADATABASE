@@ -4,30 +4,24 @@ from config.database import collection_name, counters_collection, get_next_seque
 def generate_houses():
     houses = []
     
-    # We want 32 houses total.
-    # Each floor has 4 rooms: room 1 to 4.
-    # Floor numbers: 1 to 8.
-    # Floor 1: P101, P102, P103, P104
-    # ...
-    # Floor 8: P801, P802, P803, P804 (which makes 32)
+    # We want 70 houses total.
+    # Each floor has 5 rooms: room 1 to 5.
+    # Floor numbers: 1 to 14.
     
     count = 0
-    for floor in range(1, 9):
-        for room in range(1, 5):
-            if count >= 32:
+    for floor in range(1, 15):
+        for room in range(1, 6):
+            if count >= 70:
                 break
                 
             room_str = f"P{floor}0{room}"
             title = room_str
-            addressable_str = room_str.lower()
+            addressable_str = f"phong{room}"
             
             # Vary price: base is 2.5B, adds 150M per floor, and 50M per room index
             price = 2500000000 + (floor * 150000000) + (room * 50000000)
             
             # Vary description, bedrooms, area, residential number based on room type
-            # Room 1: 1 bedroom, smaller area
-            # Room 2 & 3: 2 bedrooms, medium area
-            # Room 4: 3 bedrooms, larger area
             if room == 1:
                 area = 60.0 + (floor * 1.5)
                 desc = "nha dep 1 ngu"
@@ -36,10 +30,14 @@ def generate_houses():
                 area = 85.0 + (floor * 2.0)
                 desc = f"nha dep 2 ngu, phong {room}"
                 residential_number = 4
-            else:  # room == 4
+            elif room == 4:
                 area = 115.0 + (floor * 2.5)
                 desc = "nha dep 3 ngu rong rai"
                 residential_number = 6
+            else:  # room == 5
+                area = 130.0 + (floor * 3.0)
+                desc = "nha dep 4 ngu sieu rong"
+                residential_number = 8
                 
             image_url = "https://www.renderinghub.com/wp-content/uploads/2020/08/3d-Floor-plan-02-b.jpg"
                 
