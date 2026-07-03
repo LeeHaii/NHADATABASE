@@ -6,7 +6,7 @@ using System.Linq;
 public class HouseAPIManager : MonoBehaviour
 {
     [Header("API Settings")]
-    public string apiUrl = "http://localhost:8000/houses";
+    public string apiUrl = "https://nhadatabase.onrender.com/houses/";
 
     [Header("Scene References")]
     [Tooltip("The parent GameObject containing the 8 floor children")]
@@ -26,8 +26,10 @@ public class HouseAPIManager : MonoBehaviour
 
     private IEnumerator FetchHousesData()
     {
-        using (UnityWebRequest webRequest = UnityWebRequest.Get(apiUrl))
+        using (UnityWebRequest webRequest = UnityWebRequest.Get(apiUrl))    
         {
+            webRequest.timeout = 120; // 120 seconds timeout for Render cold start
+
             // Request and wait for the desired page.
             yield return webRequest.SendWebRequest();
 

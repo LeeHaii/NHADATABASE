@@ -25,6 +25,7 @@ public class HouseCanvasController : MonoBehaviour
 
     private Camera mainCamera;
     private HouseData currentHouseData;
+    private GameObject currentSelectedUnit;
 
     void Start()
     {
@@ -64,6 +65,15 @@ public class HouseCanvasController : MonoBehaviour
         {
             HandleClick(screenPos);
         }
+
+        // Auto-update if data arrives while Skeleton UI is showing
+        if (uiPanel != null && uiPanel.activeSelf && currentHouseData == null && currentSelectedUnit != null)
+        {
+            if (currentSelectedUnit.TryGetComponent(out HouseComponent houseComp) && houseComp.Data != null)
+            {
+                ShowHouseData(houseComp.Data);
+            }
+        }
     }
 
     private void HandleClick(Vector2 screenPos)
@@ -96,15 +106,45 @@ public class HouseCanvasController : MonoBehaviour
         {
             GameObject clickedObject = hit.collider.gameObject;
 
-            if (clickedObject.TryGetComponent(out HouseComponent houseComp) && houseComp.Data != null)
+            if (clickedObject.CompareTag("Unit"))
             {
-                ShowHouseData(houseComp.Data);
+                currentSelectedUnit = clickedObject;
+                if (clickedObject.TryGetComponent(out HouseComponent houseComp) && houseComp.Data != null)
+                {
+                    ShowHouseData(houseComp.Data);
+                }
+                else
+                {
+                    ShowSkeletonUI();
+                }
                 return;
             }
         }
 
         // If we click nothing or something else, hide the UI
         HideUI();
+    }
+
+    private void ShowSkeletonUI()
+    {
+        currentHouseData = null;
+
+        if (titleText != null) titleText.text = "Loading...";
+        if (priceText != null) priceText.text = "Price: ---";
+        if (areaText != null) areaText.text = "Area: ---";
+        if (descText != null) descText.text = "Description: Loading data from server...";
+        if (statusText != null) statusText.text = "Status: ---";
+        if (residentsText != null) residentsText.text = "Residents: ---";
+
+        if (houseImage != null)
+        {
+            houseImage.texture = null; // Clear image while loading
+        }
+
+        if (uiPanel != null)
+        {
+            uiPanel.SetActive(true);
+        }
     }
 
     private void ShowHouseData(HouseData data)
@@ -166,6 +206,7 @@ public class HouseCanvasController : MonoBehaviour
 
     private void HideUI()
     {
+        currentSelectedUnit = null;
         if (uiPanel != null)
         {
             uiPanel.SetActive(false);
