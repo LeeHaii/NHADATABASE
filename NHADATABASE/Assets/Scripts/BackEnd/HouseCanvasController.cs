@@ -129,12 +129,12 @@ public class HouseCanvasController : MonoBehaviour
     {
         currentHouseData = null;
 
-        if (titleText != null) titleText.text = "Loading...";
-        if (priceText != null) priceText.text = "Price: ---";
-        if (areaText != null) areaText.text = "Area: ---";
-        if (descText != null) descText.text = "Description: Loading data from server...";
-        if (statusText != null) statusText.text = "Status: ---";
-        if (residentsText != null) residentsText.text = "Residents: ---";
+        if (titleText != null) titleText.text = "ĐANG TẢI...";
+        if (priceText != null) priceText.text = "GIÁ BÁN: ---";
+        if (areaText != null) areaText.text = "DIỆN TÍCH: ---";
+        if (descText != null) descText.text = "MÔ TẢ: ĐANG TẢI...";
+        if (statusText != null) statusText.text = "TRẠNG THÁI: ---";
+        if (residentsText != null) residentsText.text = "SỐ NGƯỜI Ở: ---";
 
         if (houseImage != null)
         {
@@ -152,11 +152,11 @@ public class HouseCanvasController : MonoBehaviour
         currentHouseData = data;
 
         if (titleText != null) titleText.text = data.title;
-        if (priceText != null) priceText.text = $"Price: {data.price:N0} VND";
-        if (areaText != null) areaText.text = $"Area: {data.area_m2} m²";
-        if (descText != null) descText.text = $"Description: {data.description}";
-        if (statusText != null) statusText.text = $"Status: {data.status}";
-        if (residentsText != null) residentsText.text = $"Residents: {data.residential_number}";
+        if (priceText != null) priceText.text = $"GIÁ BÁN: {data.price:N0} VND";
+        if (areaText != null) areaText.text = $"DIỆN TÍCH: {data.area_m2} m²";
+        if (descText != null) descText.text = $"MÔ TẢ: {data.description}";
+        if (statusText != null) statusText.text = $"TRẠNG THÁI: {data.status}";
+        if (residentsText != null) residentsText.text = $"SỐ NGƯỜI Ở: {data.residential_number}";
 
         if (houseImage != null && !string.IsNullOrEmpty(data.image_url))
         {

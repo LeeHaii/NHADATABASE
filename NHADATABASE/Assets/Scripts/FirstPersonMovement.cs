@@ -102,6 +102,41 @@ public class FirstPersonMovement : MonoBehaviour
         joystickKnob.color = new Color(1, 1, 1, 0.5f);
         joystickKnob.rectTransform.sizeDelta = new Vector2(joystickMaxRadius, joystickMaxRadius);
         
+        // --- Create Return Button ---
+        GameObject btnObj = new GameObject("ReturnButton");
+        btnObj.transform.SetParent(touchCanvas.transform, false);
+        
+        Image btnImage = btnObj.AddComponent<Image>();
+        btnImage.color = new Color(0.1f, 0.1f, 0.1f, 0.7f); 
+        
+        RectTransform btnRect = btnObj.GetComponent<RectTransform>();
+        btnRect.anchorMin = new Vector2(1, 1);
+        btnRect.anchorMax = new Vector2(1, 1);
+        btnRect.pivot = new Vector2(1, 1);
+        btnRect.anchoredPosition = new Vector2(-40, -40); // Top Right corner
+        btnRect.sizeDelta = new Vector2(200, 80);
+        
+        Button exitBtn = btnObj.AddComponent<Button>();
+        exitBtn.onClick.AddListener(() => {
+            this.enabled = false; // Disabling script triggers OnDisable() to exit first person
+        });
+
+        // Add Text to Return Button
+        GameObject textObj = new GameObject("Text");
+        textObj.transform.SetParent(btnObj.transform, false);
+        Text btnText = textObj.AddComponent<Text>();
+        btnText.text = "QUAY LẠI"; // Return
+        btnText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        btnText.alignment = TextAnchor.MiddleCenter;
+        btnText.color = Color.white;
+        btnText.fontSize = 32;
+        
+        RectTransform textRect = textObj.GetComponent<RectTransform>();
+        textRect.anchorMin = Vector2.zero;
+        textRect.anchorMax = Vector2.one;
+        textRect.sizeDelta = Vector2.zero;
+        textRect.anchoredPosition = Vector2.zero;
+        
         touchCanvas.SetActive(false);
     }
 
